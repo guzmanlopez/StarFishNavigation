@@ -9,7 +9,7 @@ With this tool you can import [Tritech StarFish 990F](http://www.tritech.co.uk/p
 - ESRI Shapefiles (.shp)
 - KML file format (.kml)
 
-The aim of this software is "fast extract" of the navigation data to visualize it on a GIS software like [QGIS](http://www.qgis.org "QGIS webpage"). 
+The aim of this software is "fast extract" of the navigation data to visualize it on a GIS software like [QGIS](http://www.qgis.org "QGIS webpage").
 
 R packages dependencies
 ===
@@ -40,7 +40,7 @@ Run the app
 Execute in R:
 
 ```R
-shiny::runGitHub('guzmanlopez/PAS-DINARA', subdir = 'shiny/loadSSS')
+shiny::runGitHub('guzmanlopez/StarFishNavigation')
 ```
 
 Screenshot
