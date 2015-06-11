@@ -13,7 +13,9 @@ shinyServer(function(input, output, session) {
   # Data input
   datasetInput <- reactive({
     if (is.null(input$file1)) return(NULL) else {
-      sss <- unlist(strsplit(x = readLines(file(input$file1$datapath) ), split = ","))
+      con <- file(input$file1$datapath)
+      sss <- unlist(strsplit(x = readLines(con = con),  split = ","))
+      close(con)
       return(sss)
     }    
   })
