@@ -14,7 +14,7 @@ shinyUI(ui = fluidPage(
                  tags$hr(),
                  selectInput(inputId = 'extract', label = h4('View data'), choices = c('GPS' = 'gps', 'Backscatter (dB) (In development...)' = 'bs'), selectize = TRUE),
                  conditionalPanel(condition = "input.extract == 'gps'",
-                                  sliderInput(inputId = 'resolution', label = h4('Resolution (seconds)'), min = 0, max = 300, value = 0, step = 10, ticks = TRUE, post = " s"),
+                                  numericInput(inputId = 'resolution', label = h4('Resolution (seconds)'), min = 0, max = 300, value = 0, step = 10),
                                   tags$hr(),
                                   selectInput(inputId = 'export', label = h4('Export data'), choices = c('Table' = 'table', 'Shapefile' = 'shapefile', 'Kml' = 'kml'), multiple = FALSE, selectize = TRUE),
                                   
