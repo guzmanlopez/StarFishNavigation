@@ -11,7 +11,7 @@ With this tool you can import [Tritech StarFish 990F](http://www.tritech.co.uk/p
 
 The aim of this software is "fast extract" of the navigation data to visualize it on a GIS software like [QGIS](http://www.qgis.org "QGIS webpage").
 
-You can run a demo [here](https://glopez.shinyapps.io/StarFishNavigation "shinyapps.io"), but I suggest run locally using R because the csv raw files are generally big files (hundreds of megabytes) to upload over internet.
+You can run a demo [here](https://glopez.shinyapps.io/StarFishNavigation "shinyapps.io"), but I suggest run it locally using R because the csv raw files are generally big files (hundreds of megabytes) to upload over internet.
 
 R packages dependencies
 ===
