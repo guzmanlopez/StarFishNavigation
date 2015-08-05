@@ -1,41 +1,108 @@
+## ---- ui
 library(shiny)
-library(stringr)
 library(xts)
+library(leaflet)
 
-# Numbers with 16 digits, 800 mb maximium upload .csv file size
-options(shiny.maxRequestSize = 800*1024^2, digits = 16, shiny.deprecation.messages = FALSE)
+# Ampliar a 16 el número de dígitos 
+options(shiny.maxRequestSize = 800*1024^2,
+        digits = 16,
+        shiny.deprecation.messages = FALSE)
 
-# Tritech StarFish Sidescan Sonar GPS extraction tool
+# Sonar Barrido Lateral
 
 shinyUI(ui = fluidPage(
-  titlePanel("Tritech StarFish Export Navigation"),
   sidebarLayout(
-    sidebarPanel(fileInput(inputId = 'file1', label = h4('Tritech StarFish 990F (csv raw data)'), accept = 'text/csv', multiple = FALSE),
-                 tags$hr(),
-                 selectInput(inputId = 'extract', label = h4('View data'), choices = c('GPS' = 'gps', 'Backscatter (dB) (In development...)' = 'bs'), selectize = TRUE),
-                 conditionalPanel(condition = "input.extract == 'gps'",
-                                  numericInput(inputId = 'resolution', label = h4('Resolution (seconds)'), min = 0, max = 300, value = 0, step = 10),
-                                  tags$hr(),
-                                  selectInput(inputId = 'export', label = h4('Export data'), choices = c('Table' = 'table', 'Shapefile' = 'shapefile', 'Kml' = 'kml'), multiple = FALSE, selectize = TRUE),
-                                  
-                                  conditionalPanel(condition = "input.export == 'table'",
-                                                   textInput(inputId = 'filename', label = h5('Table filename'), value = 'sss-gps-data'),
-                                                   downloadButton(outputId = 'action_exp_table', label = "Download", class = 'btn-success'),
-                                                   tags$hr()),
-                                  
-                                  conditionalPanel(condition = "input.export == 'shapefile'",
-                                                   textInput(inputId = 'trackname', label = h5('Name of track'), value = 'track_01'),                                                   
-                                                   textInput(inputId = 'filename_shp', label = h5('Shapefile name'), value = 'sss-track-line'),
-                                                   downloadButton(outputId = 'action_exp_shp', label = "Download", class = 'btn-success'),
-                                                   tags$hr()),
-                                  
-                                  conditionalPanel(condition = "input.export == 'kml'",                                                   
-                                                   textInput(inputId = 'filename_kml', label = h5('Name of kml file'), value = 'sss-googleearth-track'),
-                                                   downloadButton(outputId = 'action_exp_kml', label = "Download", class = 'btn-success'),
-                                                   tags$hr())
-                 )
+    sidebarPanel(
+      conditionalPanel(condition = "input.tabs == 'tabTabla'",
+                       fileInput(inputId = 'file1', 
+                                 label = h3('Tritech StarFish 990F'), 
+                                 accept='text/csv', multiple = FALSE),
+                       tags$hr(),                 
+                       selectInput(inputId = 'extraer', 
+                                   label = h3('Ver datos'), 
+                                   choices = c('GPS' = 'gps', 
+                                               'ECO (en desarrollo...)'='eco'), 
+                                   selectize = TRUE),
+                       conditionalPanel(condition = "input.extraer == 'gps'", 
+                                        numericInput(inputId = 'resolution', 
+                                                     label = h4('Resolución (segundos)'), 
+                                                     min = 0, 
+                                                     max = 300, 
+                                                     value = 0, 
+                                                     step = 10),
+                                        tags$hr(),
+                                        selectInput(inputId = 'export', 
+                                                    label = h3('Exportar datos'), 
+                                                    choices = c('Tabla' = 'table', 
+                                                                'Shapefile' = 'shapefile', 
+                                                                'KML' = 'kml'), 
+                                                    multiple = FALSE, 
+                                                    selectize = TRUE),
+                                        conditionalPanel(condition = "input.export == 'table'",
+                                                         textInput(inputId = 'filename', 
+                                                                   label = h4('Nombre del archivo tabla:'), 
+                                                                   value = 'SBL-posiciones-gps'),
+                                                         downloadButton(outputId = 'action_exp_table', 
+                                                                        label = "Descargar", 
+                                                                        class = 'btn-success'),
+                                                         tags$hr(),
+                                                         helpText("Nota: se sugiere utilizar un nombre que contenga",
+                                                                  "un identificador de la campaña y la fecha de la misma.")
+                                        ),
+                                        conditionalPanel(condition = "input.export == 'shapefile'",
+                                                         textInput(inputId = 'trackname', 
+                                                                   label = h4('Nombre de trayectos:'), 
+                                                                   value = 'trayecto01'),
+                                                         textInput(inputId = 'filename_shp', 
+                                                                   label = h4('Nombre de Shapefile:'), 
+                                                                   value = 'SBL-trayecto-sig'),
+                                                         downloadButton(outputId = 'action_exp_shp', 
+                                                                        label = "Descargar", 
+                                                                        class = 'btn-success'),
+                                                         tags$hr(),
+                                                         helpText("Nota: se sugiere utilizar un nombre que contenga",
+                                                                  "un identificador de la campaña y la fecha de la misma.")
+                                        ),
+                                        conditionalPanel(condition = "input.export == 'kml'",
+                                                         textInput(inputId = 'filename_kml', 
+                                                                   label = h4('Nombre del archivo kml:'), 
+                                                                   value = 'SBL-trayecto-googleearth'),
+                                                         downloadButton(outputId = 'action_exp_kml', 
+                                                                        label = "Descargar", 
+                                                                        class = 'btn-success'),
+                                                         tags$hr(),
+                                                         helpText("Nota: se sugiere utilizar un nombre que contenga",
+                                                                  "un identificador de la campaña y la fecha de la misma.")
+                                        )
+                       )
+      ),
+      
+      conditionalPanel(condition = "input.tabs == 'tabMapa'",
+                       radioButtons(inputId = 'mapabase',
+                                    label = h3('Mapa base'), 
+                                    choices = c('MapBox - Antiguo' = 'MBantiguo',
+                                                'MapBox - Satélite híbrido' = 'MBsathib', 
+                                                'MapBox - Outdoor' = 'MBoutdoor',
+                                                'OpenStreetMaps' = 'OSM'), 
+                                    selected = "MBantiguo"),
+                       checkboxGroupInput(inputId = 'capas', 
+                                          label = h3('Capas adicionales'), 
+                                          choices = c('Batimetría' = 'bati')),
+                       checkboxGroupInput(inputId = 'capaSBL', 
+                                          label = h3('Datos cargados'), 
+                                          choices = c('SBL' = 'sbl'))
+      )
     ),
-    mainPanel(dataTableOutput("table"))
+    
+    mainPanel(tabsetPanel(id = "tabs", type = "pills",
+                          tabPanel(title = "Tabla de datos", 
+                                   value = "tabTabla", 
+                                   dataTableOutput("table")),
+                          tabPanel(title = "Mapa", 
+                                   value = "tabMapa", 
+                                   leafletOutput("mapa", height = "600px"))
+    )
+    )
   )
 )
 )
