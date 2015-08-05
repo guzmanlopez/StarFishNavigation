@@ -9,7 +9,7 @@ With this tool you can import [Tritech StarFish 990F](http://www.tritech.co.uk/p
 - ESRI Shapefiles (.shp)
 - KML file format (.kml)
 
-The aim of this software is "fast extract" of the navigation data to visualize it on a GIS software like [QGIS](http://www.qgis.org "QGIS webpage").
+The aim of this software is "fast extract" of the navigation data to visualize it on a GIS software like [QGIS](http://www.qgis.org "QGIS webpage") or in a web map in the "Maps" tab.
 
 You can run a demo [here](https://glopez.shinyapps.io/StarFishNavigation "shinyapps.io"), but I suggest run it locally using R because the csv raw files are generally big files (hundreds of megabytes) to upload over internet.
 
@@ -18,22 +18,22 @@ R packages dependencies
 
 ```R
 library('shiny')
+library('xts')
 library('sp')
 library('maptools')
-library('geosphere')
-library('stringr')
-library('xts')
+library('rgdal')
+library('leaflet')
 ```
 
 To install the requiered packages you can execute in R:
 
 ```R
 install.packages("shiny")
-install.packages("stringr")
 install.packages("xts")
 install.packages("sp")
 install.packages("maptools")
 install.packages("rgdal")
+install.packages("leaflet")
 ```
 
 Run the app
@@ -49,10 +49,12 @@ Screenshot
 ===
 
 ![Image](https://raw.githubusercontent.com/guzmanlopez/StarFishNavigation/master/images/screenshot01.png)
+![Image](https://raw.githubusercontent.com/guzmanlopez/StarFishNavigation/master/images/screenshot02.png)
 
 Future developments
 ===
 
+- Fix map bugs
 - Extract and show the backscatter data.
 
 
